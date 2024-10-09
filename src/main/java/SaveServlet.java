@@ -5,7 +5,6 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -32,18 +31,20 @@ public class SaveServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-        String uname =request.getParameter("uname");
-        String upass =request.getParameter("upass");
-        String email =request.getParameter("email");
-        String country =request.getParameter("country");
-        
+        PrintWriter out = response.getWriter();
+
+        String uname = request.getParameter("uname");
+        String upass = request.getParameter("upass");
+        String email = request.getParameter("email");
+        String country = request.getParameter("country");
+
         //b2. Xử lý yêu cầu (truy cập CSDL để thêm mới user)
         Connection conn = null;
         PreparedStatement ps = null;
-        try{
+        try {
+
             //1.Nạp driver
-            Class.forName("com.microsoft.splserver.jdbc.SQLSerDriver");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             //System.out.println("Nap driver OK");
             //2.Thiết lập kết nối CSDL
             conn = DriverManager.getConnection("jdbc:sqlserver://pc318;databaseName=demodb", "sa", "sa");
@@ -58,30 +59,17 @@ public class SaveServlet extends HttpServlet {
             //4.Thi hành truy vấn
             int kq = ps.executeUpdate();
             //5. Xử lý kết quả trả về
-            if(kq>0){
+            if (kq > 0) {
                 out.println("<h2>Thêm mới user thành công");
-                
-            }else{
+
+            } else {
                 out.println("<h2> Thêm mới user thất bật");
             }
             //6.đong ket noi
             conn.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Loi:" + e.toString());
             out.println("<h2> Thêm user thất bại </h2>");
-        }
-        
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SaveServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SaveServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
         }
     }
 
